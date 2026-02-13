@@ -51,26 +51,63 @@ const systems = [
         problem: 'Monolithic e-commerce systems create deployment bottlenecks and cannot scale individual components independently during traffic spikes.',
         architecture: 'Decomposed into Product, Order, Inventory, User services. Each service owns its database (PostgreSQL for transactions, MongoDB for product catalog). API Gateway handles routing, rate limiting, and auth propagation.',
         diagram: `
-                         ┌─────────────────┐
-                         │   API Gateway   │
-                         │  Rate Limiting  │
-                         │  Auth Routing   │
-                         └────────┬────────┘
-                                  │
-         ┌────────────────────────┼────────────────────────┐
-         │                        │                        │
-         ▼                        ▼                        ▼
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│  Product Svc    │    │   Order Svc     │    │  Inventory Svc  │
-│  [PostgreSQL]      │    │  [PostgreSQL]   │    │  [PostgreSQL]   │
-└────────┬────────┘    └────────┬────────┘    └────────┬────────┘
-         │                      │                      │
-         └──────────────────────┼──────────────────────┘
-                                │
-                         ┌──────▼──────┐
-                         │  RabbitMQ   │
-                         │  Event Bus  │
-                         └─────────────┘
+ ┌─────────────────────────────────────────────────┐
+│              CRAFTISTAN BACKEND                  │
+│         (Spring Boot + MongoDB)                  │
+└──────────────────────┬──────────────────────────┘
+                       │
+    ┌──────────────────┼──────────────────┐
+    │                  │                  │
+    ▼                  ▼                  ▼
+┌────────┐      ┌───────────┐      ┌──────────┐
+│ Config │      │    App    │      │  Uploads │
+│────────│      │───────────│      │──────────│
+│Security│      │Craftistan │      │  Static  │
+│JWT Auth│      │Application│      │  Files   │
+│Web/CORS│      │  (Main)   │      │          │
+│JPA     │      └───────────┘      └──────────┘
+│DataInit│
+└────────┘
+                       │
+     ┌─────────────────┼─────────────────┐
+     │           MODULES (Layered)       │
+     ▼                                   ▼
+┌─────────────────────────────────────────────┐
+│                                             │
+│   ┌──────┐  ┌───────┐  ┌───────┐  ┌─────┐  │
+│   │ Auth │  │Product│  │ Order │  │User │  │
+│   └──┬───┘  └──┬────┘  └──┬────┘  └──┬──┘  │
+│      │         │          │          │      │
+│   ┌──────┐  ┌───────┐  ┌───────┐  ┌─────┐  │
+│   │ Chat │  │Review │  │Wishlst│  │Artsn│  │
+│   └──┬───┘  └──┬────┘  └──┬────┘  └──┬──┘  │
+│      │         │          │          │      │
+│   ┌──────┐  ┌───────┐                      │
+│   │Upload│  │Transl.│     ┌────────┐        │
+│   └──────┘  └───────┘     │ Common │        │
+│                           └────────┘        │
+└─────────────────────────────────────────────┘
+
+     Each module follows this pattern:
+    ┌──────────────────────────────┐
+    │         MODULE               │
+    │  ┌────────────────────────┐  │
+    │  │     Controller         │  │  ← REST API endpoints
+    │  ├────────────────────────┤  │
+    │  │     Service            │  │  ← Business logic
+    │  ├────────────────────────┤  │
+    │  │     Repository         │  │  ← MongoDB data access
+    │  ├────────────────────────┤  │
+    │  │     Entity             │  │  ← Data models
+    │  ├────────────────────────┤  │
+    │  │     DTO                │  │  ← Request/Response objects
+    │  └────────────────────────┘  │
+    └──────────────────────────────┘
+
+     Request flow:
+    ┌────────┐    ┌──────────┐    ┌─────────┐    ┌──────────┐    ┌───────┐
+    │ Client ├───►│JWT Filter├───►│Controller├───►│ Service  ├───►│MongoDB│
+    └────────┘    └──────────┘    └─────────┘    └──────────┘    └───────┘
 `,
         security: 'Service-to-service auth via internal JWT. User context propagated in headers. Each service validates permissions independently.',
         scalability: 'Services scale independently based on load. Product catalog read-heavy — scaled with MongoDB replicas. Orders write-heavy — PostgreSQL with connection pooling.',
@@ -198,4 +235,5 @@ function renderSystems() {
         </article>
     `).join('');
 }
+
 
