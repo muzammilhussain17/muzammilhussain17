@@ -51,9 +51,9 @@ const systems = [
         problem: 'Monolithic e-commerce systems create deployment bottlenecks and cannot scale individual components independently during traffic spikes.',
         architecture: 'Decomposed into modules like Product, Order, Inventory, User services. Each module has its own configuration. It helps to handle routing, rate limiting, and auth propagation.',
         diagram: `
- ┌─────────────────────────────────────────────────┐
-│              CRAFTISTAN BACKEND                  │
-│         (Spring Boot + Postgresql + MongoDB)                  │
+┌─────────────────────────────────────────────────┐
+│              CRAFTISTAN BACKEND                 │
+│         (Spring Boot + Postgresql + MongoDB)    │
 └──────────────────────┬──────────────────────────┘
                        │
     ┌──────────────────┼──────────────────┐
@@ -235,6 +235,7 @@ function renderSystems() {
         </article>
     `).join('');
 }
+
 
 
 
