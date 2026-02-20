@@ -43,7 +43,7 @@ const systems = [
         scalability: 'Designed for horizontal scaling behind load balancer. Stateless tokens eliminate session affinity. Redis cluster for token storage.',
         failure: 'Token expiration forces re-auth. Compromised refresh token detected via rotation — old token invalidated. Redis failure degrades to DB lookup with circuit breaker.',
         stack: ['Spring Boot', 'Spring Security', 'PostgreSQL', 'Redis', 'JWT'],
-        github: '#'
+        github: 'https://github.com/muzammilhussain17/AUTHENTICATION-AUTHORIZATION-SYSTEM.git'
     },
     {
         id: 'SYS-002',
@@ -235,6 +235,7 @@ function renderSystems() {
         </article>
     `).join('');
 }
+
 
 
 
