@@ -113,7 +113,7 @@ const systems = [
         scalability: 'Services scale independently based on load. Product catalog read-heavy — scaled with MongoDB replicas. Orders write-heavy — PostgreSQL with connection pooling.',
         failure: 'Circuit breakers prevent cascade failures. Inventory check failure triggers order hold, not rejection. Eventual consistency via retry queues.',
         stack: ['Spring Boot', 'Spring Cloud', 'PostgreSQL', 'MongoDB', 'Docker'],
-        github: '#'
+        github: 'https://github.com/muzammilhussain17/Craftistan-Backend-.git'
     },
     {
         id: 'SYS-003',
@@ -235,6 +235,7 @@ function renderSystems() {
         </article>
     `).join('');
 }
+
 
 
 
