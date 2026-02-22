@@ -147,7 +147,7 @@ const systems = [
         scalability: 'Add workers to increase throughput. Queue acts as buffer during spikes. Prefetch count tuned to prevent worker overload.',
         failure: 'Failed messages route to DLQ with retry count. 3 retries with exponential backoff. Poison messages flagged for manual review. Idempotent processing prevents duplicate orders.',
         stack: ['Spring Boot', 'RabbitMQ', 'PostgreSQL', 'Docker Compose'],
-        github: '#'
+        github: 'https://github.com/muzammilhussain17/ASYNC-ORDER-PROCESSING-SYSTEM.git'
     },
     {
         id: 'SYS-004',
@@ -235,6 +235,7 @@ function renderSystems() {
         </article>
     `).join('');
 }
+
 
 
 
