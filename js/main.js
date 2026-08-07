@@ -5,7 +5,98 @@
 document.addEventListener('DOMContentLoaded', () => {
     initNav();
     renderSystems();
+    initResumeScan();
 });
+
+// ======================================
+// BLUEPRINT SCAN DOWNLOAD EFFECT
+// ======================================
+
+function initResumeScan() {
+    document.querySelectorAll('.btn--resume, .closing__link--resume').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            triggerBlueprintScan(btn.getAttribute('href'));
+        });
+    });
+}
+
+function triggerBlueprintScan(fileUrl) {
+    // Prevent multiple triggers
+    if (document.querySelector('.scan-overlay')) return;
+
+    // Create overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'scan-overlay';
+    overlay.innerHTML = `
+        <div class="scan-grid-pulse"></div>
+        <div class="scan-line"></div>
+        <div class="scan-content">
+            <div class="scan-crosshair">
+                <div class="scan-crosshair__h"></div>
+                <div class="scan-crosshair__v"></div>
+            </div>
+            <div class="scan-status">
+                <span class="scan-status__label">SYSTEM</span>
+                <span class="scan-status__text" id="scan-text">INITIALIZING SCAN...</span>
+            </div>
+            <div class="scan-progress">
+                <div class="scan-progress__bar" id="scan-bar"></div>
+            </div>
+            <div class="scan-meta">
+                <span>DOC: RESUME-MH-2024</span>
+                <span>CLEARANCE: GRANTED</span>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+
+    // Force reflow then activate
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            overlay.classList.add('active');
+        });
+    });
+
+    const textEl = document.getElementById('scan-text');
+    const barEl = document.getElementById('scan-bar');
+
+    const steps = [
+        { text: 'SCANNING DOCUMENT...', progress: 25, delay: 0 },
+        { text: 'VERIFYING CLEARANCE...', progress: 50, delay: 500 },
+        { text: 'ACCESS GRANTED ✓', progress: 75, delay: 1000 },
+        { text: 'DOWNLOADING...', progress: 100, delay: 1500 },
+    ];
+
+    steps.forEach(step => {
+        setTimeout(() => {
+            textEl.textContent = step.text;
+            barEl.style.width = step.progress + '%';
+            if (step.progress === 75) {
+                textEl.classList.add('scan-status__text--success');
+            }
+        }, step.delay);
+    });
+
+    // Trigger real download and remove overlay
+    setTimeout(() => {
+        overlay.classList.add('done');
+
+        // Trigger actual download
+        const link = document.createElement('a');
+        link.href = fileUrl;
+        link.download = '';
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Remove overlay after fade
+        setTimeout(() => {
+            overlay.remove();
+        }, 600);
+    }, 2200);
+}
 
 function initNav() {
     const toggle = document.getElementById('nav-toggle');
@@ -144,6 +235,38 @@ const systems = [
         scalability: 'Stateless design. Connection pooling. Query optimization with proper indexing. Response caching for read-heavy endpoints.',
         failure: 'Consistent error responses across all endpoints. Correlation IDs for request tracing. Health checks for dependencies. Graceful degradation when non-critical services fail.',
         stack: ['Spring Boot', 'OpenAPI', 'JPA', 'PostgreSQL', 'JUnit'],
+        github: '#'
+    },
+    {
+        id: 'SYS-005',
+        title: 'ENTERPRISE MICROSERVICES PLATFORM',
+        problem: 'Monolithic architectures struggle with independent scaling and deployments, leading to reduced resilience and bottlenecks in cross-functional team autonomy.',
+        architecture: 'Cloud-native platform with an API Gateway handling routing/auth, User Service (IAM), AI Service (NLP/Analytics), and Activity Service (Monitoring). Communicates via REST and RabbitMQ event bus.',
+        diagram: `
+                         ┌─────────────────┐
+                         │   API Gateway   │
+                         │(Auth & Routing) │
+                         └────────┬────────┘
+                                  │
+         ┌────────────────────────┼────────────────────────┐
+         │                        │                        │
+         ▼                        ▼                        ▼
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│  User Service   │    │   AI Service    │    │Activity Service │
+│  (OAuth2/RBAC)  │    │ (NLP/Analytics) │    │  (Monitoring)   │
+└────────┬────────┘    └────────┬────────┘    └────────┬────────┘
+         │                      │                      │
+         └──────────────────────┼──────────────────────┘
+                                │
+                         ┌──────▼──────┐
+                         │  RabbitMQ   │
+                         │  Event Bus  │
+                         └─────────────┘
+`,
+        security: 'OAuth2/JWT authentication, Role-based access control (RBAC), Rate limiting (100 req/min IP, 1000 req/min user), API Gateway as single entry point.',
+        scalability: 'Independent scaling of services, Kubernetes for production orchestration, PostgreSQL & Redis optimized for respective workloads.',
+        failure: 'Circuit breaking at the API Gateway level, isolated failures prevent systemic crashes, distributed tracing (Sleuth/Zipkin).',
+        stack: ['Spring Boot 3', 'Kubernetes', 'RabbitMQ', 'PostgreSQL', 'Redis', 'Docker'],
         github: '#'
     }
 ];

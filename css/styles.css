@@ -211,6 +211,250 @@ strong {
     color: var(--text-primary);
 }
 
+/* Resume Download Button */
+.btn--resume {
+    background: var(--accent-dim);
+    border-color: var(--accent);
+    color: var(--accent);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn--resume::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(74, 158, 255, 0.08), transparent);
+    transform: translateX(-100%);
+    animation: resume-shimmer 3s ease-in-out infinite;
+}
+
+@keyframes resume-shimmer {
+    0% { transform: translateX(-100%); }
+    50% { transform: translateX(100%); }
+    100% { transform: translateX(100%); }
+}
+
+.btn--resume:hover {
+    background: var(--accent);
+    color: var(--bg-primary);
+    border-color: var(--accent);
+    box-shadow: 0 0 20px rgba(74, 158, 255, 0.25);
+}
+
+.btn--resume:hover svg {
+    animation: bounce-down 0.4s ease;
+}
+
+@keyframes bounce-down {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(3px); }
+}
+
+/* ======================================
+   BLUEPRINT SCAN OVERLAY
+   ====================================== */
+
+.scan-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(12, 12, 14, 0.96);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.scan-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.scan-overlay.done {
+    opacity: 0;
+    transition: opacity 0.5s ease 0.1s;
+}
+
+/* Grid pulse background */
+.scan-grid-pulse {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(74, 158, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(74, 158, 255, 0.08) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: grid-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes grid-pulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.7; }
+}
+
+/* Sweeping scan line */
+.scan-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--accent);
+    box-shadow:
+        0 0 15px var(--accent),
+        0 0 40px rgba(74, 158, 255, 0.4),
+        0 -20px 60px rgba(74, 158, 255, 0.1),
+        0 20px 60px rgba(74, 158, 255, 0.1);
+    animation: scan-sweep 2s ease-in-out forwards;
+}
+
+.scan-line::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -40px;
+    height: 80px;
+    background: linear-gradient(
+        180deg,
+        transparent,
+        rgba(74, 158, 255, 0.03) 30%,
+        rgba(74, 158, 255, 0.06) 50%,
+        rgba(74, 158, 255, 0.03) 70%,
+        transparent
+    );
+}
+
+@keyframes scan-sweep {
+    0% { top: -2px; }
+    100% { top: 100%; }
+}
+
+/* Center content */
+.scan-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    animation: scan-content-in 0.4s ease 0.2s both;
+}
+
+@keyframes scan-content-in {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Crosshair */
+.scan-crosshair {
+    position: relative;
+    width: 60px;
+    height: 60px;
+}
+
+.scan-crosshair__h,
+.scan-crosshair__v {
+    position: absolute;
+    background: var(--accent);
+}
+
+.scan-crosshair__h {
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    transform: translateY(-50%);
+}
+
+.scan-crosshair__v {
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    transform: translateX(-50%);
+}
+
+.scan-crosshair::before,
+.scan-crosshair::after {
+    content: '';
+    position: absolute;
+    border: 1px solid var(--accent);
+    border-radius: 50%;
+}
+
+.scan-crosshair::before {
+    inset: 8px;
+    opacity: 0.6;
+}
+
+.scan-crosshair::after {
+    inset: 18px;
+    opacity: 0.3;
+}
+
+/* Status text */
+.scan-status {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.scan-status__label {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    letter-spacing: 0.2em;
+}
+
+.scan-status__text {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    transition: color 0.3s ease;
+}
+
+.scan-status__text--success {
+    color: var(--accent);
+    text-shadow: 0 0 12px rgba(74, 158, 255, 0.5);
+}
+
+/* Progress bar */
+.scan-progress {
+    width: 200px;
+    height: 2px;
+    background: var(--border);
+    overflow: hidden;
+}
+
+.scan-progress__bar {
+    height: 100%;
+    width: 0;
+    background: var(--accent);
+    box-shadow: 0 0 8px rgba(74, 158, 255, 0.5);
+    transition: width 0.4s ease;
+}
+
+/* Bottom meta */
+.scan-meta {
+    display: flex;
+    gap: 24px;
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    opacity: 0.5;
+}
+
 /* ======================================
    HEADER
    ====================================== */
@@ -729,6 +973,30 @@ strong {
 }
 
 .closing__link:hover .closing__link-value {
+    color: var(--accent);
+}
+
+/* Resume Card in Contact Section */
+.closing__link--resume {
+    border-color: rgba(74, 158, 255, 0.3);
+    background: var(--accent-dim);
+}
+
+.closing__link--resume .closing__link-label {
+    color: var(--accent);
+}
+
+.closing__link--resume .closing__link-value {
+    color: var(--text-secondary);
+}
+
+.closing__link--resume:hover {
+    border-color: var(--accent);
+    background: rgba(74, 158, 255, 0.12);
+    box-shadow: 0 0 16px rgba(74, 158, 255, 0.1);
+}
+
+.closing__link--resume:hover .closing__link-value {
     color: var(--accent);
 }
 
